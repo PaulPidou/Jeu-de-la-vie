@@ -6,6 +6,7 @@ class Grid(Canvas):
         Canvas.__init__(self, boss)
         self.configure(width=larg*box, height=haut*box)
         self.larg, self.haut, self.box = larg, haut, box
+        # classique / naissante / vivante / mourrante / vivante pour un seul cycle
         self.cellState = ['black', 'green', 'blue', 'red', 'yellow'] 
         self.drawGrid()
 
@@ -27,11 +28,14 @@ class Grid(Canvas):
         "Colorie une cellule"
         self.create_rectangle(x*self.box, y*self.box, (x+1)*self.box, (y+1)*self.box, fill=self.cellState[state])
 
-    def drawCells(self, cells):
+    def drawCells(self, cells, states=None):
         for key, value in cells.items():
             if value:
                 x, y = key[0], key[1]
-                self.drawCell(x, y)
+                if states == None:
+                    self.drawCell(x, y)
+                else:
+                    self.drawCell(x, y, states[key])
 
 # Programme de test
 if __name__ == '__main__':

@@ -20,10 +20,19 @@ class Application(Tk):
         self.btStart.pack(fill=X)
         self.btNext = Button(self, text='Next', command=self.next)
         self.btNext.pack(fill=X)
+
+        Label(self, text='Style :').pack(fill=X)
+        self.choiceColour = StringVar()
+        self.choiceColour.set('classic')
+        Radiobutton(self, text='Classique', variable=self.choiceColour, value='classic').pack(fill=X)
+        Radiobutton(self, text='Colorée', variable=self.choiceColour, value='colorful').pack(fill=X)
+        
         Button(self, text='Quitter', command=self.destroy).pack(fill=X)
 
         # Grille non graphique
-        self.cells = {}
+        self.cells = {} # current
+        self.previousCells = {} # previous step
+        self.futureCells = {} # next step
 
         # Animation on/off
         self.run = False
@@ -50,16 +59,14 @@ class Application(Tk):
             x, y = randrange(larg), randrange(haut)
             x += int(larg/2)
             y += int(haut/2)
-            self.grille.drawCell(x, y)
             self.cells[(x,y)] = True # Dictionnaire contenant les positions des cellules vivantes
+        self.grille.drawCells(self.cells)
 
     def anim(self):
         "Animer l'automate"
         if self.run:
             self.after(125, self.next)
             self.after(125, self.anim)
-        else:
-            return
 
     def start(self):
         "Calcule les prochains cycles en boucle"
@@ -75,15 +82,31 @@ class Application(Tk):
         self.btStart.configure(text='Start', command=self.start)
 
     def next(self):
-        "Calcule le prochain cycle"
+        "Calcule et affiche le prochain cycle"
+        newCells = self.future()
+        # on garde en mémoire les états précédents
+        self.previousCells.clear()
+        self.previousCells = self.cells.copy()
+        # on met à jour l'état des cellules
+        self.clearGrid()
+        self.cells = newCells.copy()
+        # on calcule le cycle suivant
+        self.futureCells = self.future()
+        # on dessine le nouveau état des cellules
+        if self.choiceColour.get() == 'classic':
+            self.grille.drawCells(self.cells)
+        else:
+            states = rules.haveState(self.cells, self.previousCells, self.futureCells)
+            self.grille.drawCells(self.cells, states)
+
+    def future(self):
+        "Retourne le cycle suivant"
         newCells = {}
         for x in range(0, self.widthGrid):
             for y in range(0, self.heightGrid):
-                newCells[(x,y)] = rules.nextState(self.cells,x, y)
-        self.clearGrid()
-        self.cells = newCells.copy()
-        self.grille.drawCells(newCells)
-        
+                newCells[(x,y)] = rules.nextState(self.cells,x,y)
+        return newCells
+                
     
 # Programme de test
 if __name__ == '__main__':
