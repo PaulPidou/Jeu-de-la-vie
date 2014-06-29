@@ -56,18 +56,14 @@ class Application(Tk):
     def genere(self):
         "Remplie une portion de la grille aléatoirement"
         self.clearGrid()
-        """larg, haut = int(self.widthGrid/2), int(self.heightGrid/2)
+        larg, haut = int(self.widthGrid/2), int(self.heightGrid/2)
         for n in range(larg*haut):
             x, y = randrange(larg), randrange(haut)
             x += int(larg/2)
             y += int(haut/2)
-            self.cells[(x,y)] = True """# Dictionnaire contenant les positions des cellules vivantes
-        pattern = Stable()
-        self.cells = pattern.createShip(3)
-        self.grille.drawCells(self.cells)
-        self.clearGrid()
-        pattern.createShip()
-        self.cells = pattern.createSnake(1)
+            self.cells[(x,y)] = True # Dictionnaire contenant les positions des cellules vivantes
+        """pattern = Stable()
+        self.cells = pattern.createBarge()"""
         self.grille.drawCells(self.cells)
 
     def anim(self):
