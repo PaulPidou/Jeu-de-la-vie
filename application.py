@@ -63,7 +63,7 @@ class Application(Tk):
             y += int(haut/2)
             self.cells[(x,y)] = True # Dictionnaire contenant les positions des cellules vivantes
         """pattern = Stable()
-        self.cells = pattern.createBarge()"""
+        self.cells = pattern.createPond()"""
         self.grille.drawCells(self.cells)
 
     def anim(self):
@@ -104,8 +104,8 @@ class Application(Tk):
     def future(self):
         "Retourne le cycle suivant"
         newCells = {}
-        for x in range(0, self.widthGrid):
-            for y in range(0, self.heightGrid):
+        for x in range(self.widthGrid):
+            for y in range(self.heightGrid):
                 newCells[(x,y)] = rules.nextState(self.cells,x,y)
         return newCells
 
