@@ -6,7 +6,7 @@ class Grid(Canvas):
         Canvas.__init__(self, boss)
         self.configure(width=larg*box, height=haut*box)
         self.larg, self.haut, self.box = larg, haut, box
-        # classique / naissante / vivante / mourrante / vivante pour un seul cycle
+        # classique / naissante / vivante / mourante / vivante pour un seul cycle
         self.cellState = ['black', 'green', 'blue', 'red', 'yellow'] 
         self.drawGrid()
 

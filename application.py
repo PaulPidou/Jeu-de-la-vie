@@ -1,6 +1,7 @@
 from tkinter import *
 from grid import *
 from rules import *
+from pattern import *
 from random import randrange
 
 class Application(Tk):
@@ -24,8 +25,8 @@ class Application(Tk):
         Label(self, text='Style :').pack(fill=X)
         self.choiceColour = StringVar()
         self.choiceColour.set('classic')
-        Radiobutton(self, text='Classique', variable=self.choiceColour, value='classic').pack(fill=X)
-        Radiobutton(self, text='Colorée', variable=self.choiceColour, value='colorful').pack(fill=X)
+        Radiobutton(self, text='Classique', variable=self.choiceColour, value='classic', command=self.setColour).pack(fill=X)
+        Radiobutton(self, text='Colorée', variable=self.choiceColour, value='colorful', command=self.setColour).pack(fill=X)
         
         Button(self, text='Quitter', command=self.destroy).pack(fill=X)
 
@@ -33,6 +34,7 @@ class Application(Tk):
         self.cells = {} # current
         self.previousCells = {} # previous step
         self.futureCells = {} # next step
+        self.states = {} # map des états des cellules
 
         # Animation on/off
         self.run = False
@@ -54,12 +56,18 @@ class Application(Tk):
     def genere(self):
         "Remplie une portion de la grille aléatoirement"
         self.clearGrid()
-        larg, haut = int(self.widthGrid/2), int(self.heightGrid/2)
+        """larg, haut = int(self.widthGrid/2), int(self.heightGrid/2)
         for n in range(larg*haut):
             x, y = randrange(larg), randrange(haut)
             x += int(larg/2)
             y += int(haut/2)
-            self.cells[(x,y)] = True # Dictionnaire contenant les positions des cellules vivantes
+            self.cells[(x,y)] = True """# Dictionnaire contenant les positions des cellules vivantes
+        pattern = Stable()
+        self.cells = pattern.createShip(3)
+        self.grille.drawCells(self.cells)
+        self.clearGrid()
+        pattern.createShip()
+        self.cells = pattern.createSnake(1)
         self.grille.drawCells(self.cells)
 
     def anim(self):
@@ -93,11 +101,9 @@ class Application(Tk):
         # on calcule le cycle suivant
         self.futureCells = self.future()
         # on dessine le nouveau état des cellules
-        if self.choiceColour.get() == 'classic':
-            self.grille.drawCells(self.cells)
-        else:
-            states = rules.haveState(self.cells, self.previousCells, self.futureCells)
-            self.grille.drawCells(self.cells, states)
+        self.setColour()
+        if self.detectEnd():
+            self.stop()
 
     def future(self):
         "Retourne le cycle suivant"
@@ -106,7 +112,21 @@ class Application(Tk):
             for y in range(0, self.heightGrid):
                 newCells[(x,y)] = rules.nextState(self.cells,x,y)
         return newCells
-                
+
+    def setColour(self):
+        "Colorie les cellulues en fonction du choix du style"
+        self.states = rules.haveState(self.cells, self.previousCells, self.futureCells)
+        if self.choiceColour.get() == 'classic':
+            self.grille.drawCells(self.cells)
+        else:
+            self.grille.drawCells(self.cells, self.states)
+
+    def detectEnd(self):
+        "Détecte quand les cellules ont atteint un état stable"
+        for v in self.states.values():
+            if v != 2 and v != 4:
+                return False
+        return True
     
 # Programme de test
 if __name__ == '__main__':
