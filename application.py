@@ -39,6 +39,9 @@ class Application(Tk):
         # Animation on/off
         self.run = False
 
+        # Détection de pattern
+        self.pattern = Pattern(self.widthGrid, self.heightGrid, self.sideBox)
+
         self.mainloop()
 
     def setBtNext(self):
@@ -62,8 +65,6 @@ class Application(Tk):
             x += int(larg/2)
             y += int(haut/2)
             self.cells[(x,y)] = True # Dictionnaire contenant les positions des cellules vivantes
-        """pattern = Stable()
-        self.cells = pattern.createPond()"""
         self.grille.drawCells(self.cells)
 
     def anim(self):
@@ -98,6 +99,7 @@ class Application(Tk):
         self.futureCells = self.future()
         # on dessine le nouveau état des cellules
         self.setColour()
+        self.pattern.detectPattern(self.cells, self.states)
         if self.detectEnd():
             self.stop()
 

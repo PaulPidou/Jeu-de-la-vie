@@ -1,4 +1,4 @@
-class Pattern(object):
+class Pattern_ref(object):
     "Classe créant un pattern vide"
     def __init__(self):
         self.width, self.height = 0, 0
@@ -15,10 +15,10 @@ class Pattern(object):
     def getHeight(self):
         return self.height
 
-class Stable(Pattern):
+class Stable_ref(Pattern):
     "Classe créant un patern stable"
     def __init__(self):
-        Pattern.__init__(self)
+        Pattern_ref.__init__(self)
 
     def resetPattern(self):
         self.width, self.height = 0,0

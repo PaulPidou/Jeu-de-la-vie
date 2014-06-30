@@ -6,12 +6,10 @@ class rules(object):
     def analyseCell(cells, x, y):
         "Analyse les 8 cellules autour de la cellule envoyée"
         cpt = 0
-        for x1 in range(-1, 2): # parcours de l'entourgae de la cellule
+        for x1 in range(-1, 2): # parcours de l'entourage de la cellule
             for y1 in range(-1, 2):
-                if rules.isCellAlive(cells, x+x1, y+y1):
+                if rules.isCellAlive(cells, x+x1, y+y1) and (x1 != 0 or y1 != 0):
                     cpt += 1
-        if cpt > 0 and rules.isCellAlive(cells, x, y):
-            cpt -= 1 # évite de comptabilité la cellule analysée
         return cpt
 
     def nextState(cells, x, y):
