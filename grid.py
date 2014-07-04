@@ -10,15 +10,17 @@ class Grid(Canvas):
         self.cellState = ['black', 'green', 'blue', 'red', 'yellow'] 
         self.drawGrid()
 
+    def clearGrid(self):
+        self.delete(ALL)
+        self.drawGrid()
+
     def drawGrid(self):
         "Dessine la grille"
         x, y = 0, 0
-
         # lignes d'axe Y
         for n in range(self.larg+1):
             self.create_line(x, 0, x, self.haut*self.box)
             x += self.box
-
         # lignes d'axe X
         for n in range(self.haut+1):
             self.create_line(0, y, self.larg*self.box, y)
@@ -29,6 +31,7 @@ class Grid(Canvas):
         self.create_rectangle(x*self.box, y*self.box, (x+1)*self.box, (y+1)*self.box, fill=self.cellState[state])
 
     def drawCells(self, cells, states=None):
+        "Dessines l'ensemble de cellules reçues en paramètre"
         for key, value in cells.items():
             if value:
                 x, y = key[0], key[1]

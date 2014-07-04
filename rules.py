@@ -13,6 +13,7 @@ class rules(object):
         return cpt
 
     def nextState(cells, x, y):
+        "Calcule l'état suivant de la cellule"
         lgr = rules.analyseCell(cells, x, y)
         if rules.isCellAlive(cells, x, y):
             if lgr == 2 or lgr == 3:
