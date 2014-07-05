@@ -1,7 +1,13 @@
 class rules(object):
     "Règles du jeu de la vie"
     def isCellAlive(cells, x, y):
-        return cells.get((x,y), False)
+        try:
+            return cells.get((x,y), False) # Si cells est un dictionnaire
+        except: # Si cells est une liste
+            if (x,y) in cells:
+                return True
+            else:
+                return False
 
     def analyseCell(cells, x, y):
         "Analyse les 8 cellules autour de la cellule envoyée"

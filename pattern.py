@@ -15,6 +15,7 @@ class Pattern(object):
         self.previousCycle = self.currentCycle.copy()
         self.currentCycle = []
         self.detectPatternStable()
+        #self.detectPatternOscillating()
 
     def detectPatternStable(self):
         "Détecte les patterns stable"
@@ -25,7 +26,17 @@ class Pattern(object):
                     if self.searchNearby(x,y):
                         self.proceedStable()
 
-    def searchNearby(self, x,y):
+    def detectPatternOscillating(self):
+        "Détecte les patterns oscillants"
+        for x in range(self.width):
+            for y in range(self.height):
+                if rules.isCellAlive(self.cpyCells,x,y):
+                    self.tempOscillating = []
+                    if self.searchNearbyBis(x,y):
+                        self.proceedOscillating()
+                    
+
+    def searchNearby(self, x, y):
         "Détecte l'entourage"
         self.tempStable.append((x,y))
         for x1 in range(-1, 2): # Parcours de l'entourage de la cellule
@@ -36,6 +47,15 @@ class Pattern(object):
                             return False
                     else:
                         return False
+        return True
+
+    def searchNearbyBis(self, x, y):
+        "Détecte l'entourage"
+        self.tempOscillating.append((x,y))
+        for x1 in range(-1, 2): # Parcours de l'entourage de la cellule
+            for y1 in range(-1, 2):
+                if rules.isCellAlive(self.cpyCells, x+x1, y+y1) and (x1 != 0 or y1 != 0) and not((x+x1,y+y1) in self.tempOscillating):
+                    self.searchNearbyBis(x+x1,y+y1)
         return True
 
     def proceedStable(self):
@@ -49,6 +69,39 @@ class Pattern(object):
         else:
             listStable = self.getPatternStable(pattern)
             self.savePatternStable(listStable)
+
+    def proceedOscillating(self):
+        pattern = self.tempOscillating.copy()
+        pattern.sort()
+
+        temp = pattern.copy()
+        self.count = 0
+
+        if self.futureCells(temp, pattern):
+            print('Pattern :', pattern)
+
+        for n in pattern:
+            self.cpyCells[n] = False
+        
+
+    def futureCells(self, tp, pattern):
+        self.count += 1
+        temp = tp.copy()
+        tp = []
+        for x in range(self.width):
+            for y in range(self.height):
+                if rules.nextState(temp,x,y):
+                    tp.append((x,y))
+        tp.sort()
+        
+        if self.comparePattern(tp, pattern): # Pattern oscillant
+            return True
+        elif not len(tp): # Grille vide
+            return False
+        elif self.count > 20:
+            return False
+        else:
+            return self.futureCells(tp, pattern)
 
     def getPatternStable(self, data):
         "Reréférence le pattern le renvoie mise en forme"
